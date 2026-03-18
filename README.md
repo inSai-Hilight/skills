@@ -38,13 +38,23 @@ Agent:
 
 ### Claude Code
 
-1. 在 `~/.claude/settings.json` 中添加 MCP Server 配置：
+**方式一：CLI 命令（推荐）**
+
+```bash
+claude mcp add-json hilight '{"type":"http","url":"https://<SERVER_HOST>:10621/mcp","headers":{"Authorization":"Bearer sk_your_api_key_here"}}'
+```
+
+添加 `--scope user` 使配置对所有项目生效，或 `--scope project` 仅限当前项目。
+
+**方式二：手动编辑配置文件**
+
+用户级配置（所有项目生效）— 编辑 `~/.claude.json`：
 
 ```json
 {
   "mcpServers": {
     "hilight": {
-      "type": "streamableHttp",
+      "type": "http",
       "url": "https://<SERVER_HOST>:10621/mcp",
       "headers": {
         "Authorization": "Bearer sk_your_api_key_here"
@@ -54,15 +64,39 @@ Agent:
 }
 ```
 
-2. 将 `skills/hilight-tiktok.md` 复制到 `~/.claude/skills/`
+项目级配置（仅当前项目生效）— 在项目根目录创建 `.mcp.json`：
 
-3. 重启 Claude Code
+```json
+{
+  "mcpServers": {
+    "hilight": {
+      "type": "http",
+      "url": "https://<SERVER_HOST>:10621/mcp",
+      "headers": {
+        "Authorization": "Bearer ${HILIGHT_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+> **提示：** `.mcp.json` 支持环境变量展开（`${VAR}` 或 `${VAR:-default}`），推荐将 API Key 存入环境变量后在配置中引用，避免明文提交到版本控制。
+
+验证配置：
+
+```bash
+claude mcp list
+```
+
+**安装 Skill**
+
+将 `skills/hilight-tiktok/` 目录复制到 `~/.claude/skills/`，然后重启 Claude Code。
 
 ### OpenClaw
 
 ```bash
 mcporter config add hilight \
-  --type streamableHttp \
+  --type http \
   --url "https://<SERVER_HOST>:10621/mcp" \
   --header "Authorization: Bearer sk_your_api_key_here"
 
@@ -105,7 +139,8 @@ hilight-mcp/
 ├── README.md              # 本文件
 ├── AGENT_INSTALL.md       # Agent 自动安装指南
 ├── skills/
-│   └── hilight-tiktok.md  # Skill 文件（意图识别 + 流程编排）
+│   └── hilight-tiktok/
+│       └── SKILL.md        # Skill 文件（意图识别 + 流程编排）
 └── examples/
     └── usage-examples.md  # 使用示例
 ```
