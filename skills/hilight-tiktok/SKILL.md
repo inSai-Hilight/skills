@@ -1,11 +1,30 @@
 ---
 name: hilight-tiktok
-description: 通过 inSai Hilight MCP Server 生成 TikTok 带货视频。当用户提到生成视频、TK视频、TikTok广告、带货视频、商品视频、电商视频、产品宣传片、product video、generate video、make a video、短视频、把图片变成视频、做个视频，或需要将商品图片转化为短视频时，务必使用此 skill。即使用户没有明确说"TikTok"，只要涉及商品+视频生成的意图，也应触发。完整覆盖图片上传、项目创建、参数设置、费用确认、视频生成、进度追踪和失败重试全流程。
+description: 通过 inSai Hilight MCP Server 生成 TikTok 带货视频。当用户提到生成视频、TK视频、TikTok广告、带货视频、商品视频、电商视频、产品宣传片、短视频、把图片变成视频、做个视频、product video、generate video、make a video、promo video、e-commerce video、ad video、marketing video，或需要将商品图片转化为短视频时，务必使用此 skill。即使用户没有明确说"TikTok"，只要涉及商品+视频生成的意图，也应触发。完整覆盖图片上传、项目创建、参数设置、费用确认、视频生成、进度追踪和失败重试全流程。
 ---
 
 # Hilight TikTok 带货视频生成
 
 你是一个帮助用户通过 Hilight MCP Server 生成 TikTok 带货视频的 AI Agent。整个流程涉及 7 个 MCP 工具，按顺序协作完成从素材准备到视频交付的全链路。
+
+## 环境变量
+
+以下变量在文档中以 `{{变量名}}` 形式引用，切换环境时只需修改此处：
+
+| 变量 | 值 | 说明 |
+|------|----|------|
+| `API_BASE` | `http://127.0.0.1:10620` | HTTP 接口的基础地址 |
+| `APP_BASE` | `https://app.hi-light.ai` | 用户中心和充值页面地址 |
+
+## 前置检查
+
+在开始工作流程前，先确认 Hilight MCP Server 已正确配置。尝试调用任意一个 hilight MCP tool（如 `create_project`），如果调用失败（tool 不存在或连接错误），说明 MCP 尚未配置，按以下流程引导用户：
+
+1. 向用户索取 **Hilight API Key**（以 `sk_` 开头，在 {{APP_BASE}}/userCenter 获取）
+2. 用户提供后，根据当前 Agent 环境执行配置：
+   - **Claude Code**：执行 `claude mcp add --transport http --scope user hilight {{API_BASE}}/mcp --header "Authorization: Bearer <API_KEY>"`
+   - **OpenClaw**：编辑 `~/.mcporter/mcporter.json`，在 `mcpServers` 中添加 `hilight` 配置（包含 `url` 和 `headers.Authorization`），然后执行 `openclaw gateway restart`
+3. 配置完成后，重新调用 tool 验证连通性，确认成功后再进入工作流程
 
 ## 工作流程
 
@@ -29,11 +48,22 @@ description: 通过 inSai Hilight MCP Server 生成 TikTok 带货视频。当用
 
 ### 第二步：上传图片（按需）
 
-如果用户提供的是本地文件或 base64 图片（而非 URL）：
-1. **预处理图片**：`upload_image` 接受 base64 编码的图片数据，大图片的 base64 可能超出上下文限制。上传前先用系统工具压缩图片（如 macOS 的 `sips -Z 600 input.jpg --out /tmp/resized.jpg`，或 ImageMagick 的 `convert input.jpg -resize 600x /tmp/resized.jpg`），将长边控制在 600px 以内，确保 base64 编码后不超过 40KB
-2. 用 `base64` 命令转换压缩后的图片，读取 base64 字符串，添加 `data:image/jpeg;base64,` 前缀后传入 `upload_image`
-3. 收集返回的 CDN URL
-4. 如果图片未通过内容审核，告知用户并请求替换
+如果用户提供的是本地文件（而非 URL）：
+
+**使用 HTTP 接口上传（推荐，速度快）：**
+1. 直接通过 `curl` 调用 Hilight 文件上传接口（无需鉴权）：
+   ```bash
+   curl -s -X POST {{API_BASE}}/api/mcp/upload \
+     -F "file=@/path/to/image.jpg"
+   ```
+2. 响应格式为 `{"code": 10000, "data": {"url": "<CDN地址>"}}`，提取 `data.url` 作为图片 URL
+3. 支持 jpg/png/heic/bmp/webp 等格式，heic/bmp/webp 会自动转为 jpg
+4. 多张图片逐个上传，收集所有 CDN URL
+
+**使用 MCP upload_image Tool（备选，适合已有 base64 数据的场景）：**
+1. 如果图片已经是 base64 格式，可直接调用 `upload_image` Tool
+2. 注意大图片的 base64 可能超出上下文限制，建议先压缩（长边 600px 以内）
+3. 如果图片未通过内容审核，告知用户并请求替换
 
 ### 第三步：创建项目 & 设置参数
 
@@ -54,7 +84,7 @@ description: 通过 inSai Hilight MCP Server 生成 TikTok 带货视频。当用
 2. 将返回的费用数据（单价、数量、总费用、余额、是否充足等）以清晰的格式展示给用户
 3. **余额不足时**：
    - 展示差额信息
-   - 提供充值链接：https://app.hi-light.ai/userCenter/star-center
+   - 提供充值链接：{{APP_BASE}}/userCenter/star-center
    - **终止流程，不得调用 `submit_project`**
 
 4. **余额充足时**：
