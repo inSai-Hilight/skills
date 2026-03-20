@@ -1,12 +1,20 @@
 # Hilight TikTok — Agent 自动安装指南
 
+> **域名配置：**
+>
+> - `MCP_ENDPOINT` = `https://wiseapi.hi-light.ai/mcp`
+> - `APP_URL` = `https://app.hi-light.ai`
+> - `SKILL_REPO` = `https://github.com/inSai-Hilight/skills.git`
+>
+> 以下文档中所有 `{{MCP_ENDPOINT}}`、`{{APP_URL}}`、`{{SKILL_REPO}}` 均引用上方的值。
+
 本文档供 AI Agent 阅读并自动完成 Hilight MCP Server 的安装和配置。
 
 ## 安装流程
 
 ### 第一步：获取 API Key
 
-在继续之前，向用户索取 **Hilight API Key**（以 `sk_` 开头的 64 位十六进制字符串，在 https://app.hi-light.ai/userCenter 获取）。
+在继续之前，向用户索取 **Hilight API Key**（以 `sk_` 开头的 64 位十六进制字符串，在 {{APP_URL}}/userCenter 获取）。
 
 > **必须等用户提供 API Key 后才能继续配置，不要使用占位符完成配置。**
 
@@ -26,7 +34,7 @@
 执行以下命令，将 `<API_KEY>` 替换为用户提供的实际值：
 
 ```bash
-claude mcp add --transport http --scope user hilight https://wiseapi.hi-light.ai/mcp \
+claude mcp add --transport http --scope user hilight {{MCP_ENDPOINT}} \
   --header "Authorization: Bearer <API_KEY>"
 ```
 
@@ -38,24 +46,23 @@ claude mcp list
 
 确认输出中包含 `hilight`。
 
-### 2. 安装 Skill
+### 2. 添加 Skill Marketplace
 
-Claude Code 的 skill 目录为 `~/.claude/skills/`。Skill 是一个完整的目录（可能包含子目录），不能只下载单个文件。
+在 Claude Code 会话中执行：
 
-检查用户是否已克隆仓库（查找 `~/hilight-skills` 或在常见位置搜索），如果已存在则直接软链接：
-
-```bash
-ln -s <仓库路径>/skills/hilight-tiktok ~/.claude/skills/hilight-tiktok
+```
+/plugin marketplace add inSai-Hilight/skills
 ```
 
-如果未克隆，先克隆再软链接：
+### 3. 安装 Skill
 
-```bash
-git clone https://github.com/inSai-Hilight/hilight-skills.git ~/hilight-skills
-ln -s ~/hilight-skills/skills/hilight-tiktok ~/.claude/skills/hilight-tiktok
+在 Claude Code 会话中执行：
+
+```
+/plugin install hilight-tiktok@hilight-skills
 ```
 
-### 3. 验证
+### 4. 验证
 
 提示用户重启 Claude Code（或执行 `/mcp` 重新加载），然后调用 `get_pricing` 测试连通性。返回错误响应（如"项目不存在"）即说明服务可达且鉴权正常。
 
@@ -97,7 +104,7 @@ mcporter config list
 {
   "mcpServers": {
     "hilight": {
-      "url": "https://wiseapi.hi-light.ai/mcp",
+      "url": "{{MCP_ENDPOINT}}",
       "headers": {
         "Authorization": "Bearer <API_KEY>"
       }
@@ -122,19 +129,18 @@ mcporter config list
 
 ### 3. 安装 Skill
 
-OpenClaw 的 skill 目录为 `~/.openclaw/skills/`。Skill 是一个完整的目录（可能包含子目录），不能只下载单个文件。
+在 OpenClaw 会话中执行：
 
-检查用户是否已克隆仓库，如果已存在则直接软链接：
-
-```bash
-ln -s <仓库路径>/skills/hilight-tiktok ~/.openclaw/skills/hilight-tiktok
+```
+/plugin marketplace add inSai-Hilight/skills
+/plugin install hilight-tiktok@hilight-skills
 ```
 
-如果未克隆，先克隆再软链接：
+如果 OpenClaw 不支持 plugin marketplace，则手动下载安装：
 
 ```bash
-git clone https://github.com/inSai-Hilight/hilight-skills.git ~/hilight-skills
-ln -s ~/hilight-skills/skills/hilight-tiktok ~/.openclaw/skills/hilight-tiktok
+git clone {{SKILL_REPO}} ~/hilight-skills
+cp -r ~/hilight-skills/skills/hilight-tiktok ~/.openclaw/skills/hilight-tiktok
 ```
 
 ### 4. 验证
@@ -159,7 +165,7 @@ ln -s ~/hilight-skills/skills/hilight-tiktok ~/.openclaw/skills/hilight-tiktok
 
 | 问题 | 解决方案 |
 |------|----------|
-| 连接被拒绝 | 检查网络连通性，确认可以访问 https://wiseapi.hi-light.ai |
-| 401 未授权 | API Key 无效或已过期，引导用户前往 https://app.hi-light.ai/userCenter 重新生成 |
+| 连接被拒绝 | 检查网络连通性，确认可以访问 {{MCP_ENDPOINT}} |
+| 401 未授权 | API Key 无效或已过期，引导用户前往 {{APP_URL}}/userCenter 重新生成 |
 | 工具未显示 | 重启 Claude Code / OpenClaw gateway 并检查 MCP 服务状态 |
 | 请求超时 | 服务可能负载较高，稍后重试 |

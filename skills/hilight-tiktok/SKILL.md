@@ -13,7 +13,7 @@ description: 通过 inSai Hilight MCP Server 生成 TikTok 带货视频。当用
 
 | 变量 | 值 | 说明 |
 |------|----|------|
-| `API_BASE` | `http://127.0.0.1:10620` | HTTP 接口的基础地址 |
+| `API_BASE` | `https://wiseapi.hi-light.ai` | HTTP 接口的基础地址 |
 | `APP_BASE` | `https://app.hi-light.ai` | 用户中心和充值页面地址 |
 
 ## 前置检查
