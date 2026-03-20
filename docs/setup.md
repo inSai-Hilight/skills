@@ -1,6 +1,6 @@
 # Hilight TikTok — 手动安装指南
 
-面向开发者的手动安装指南。按照以下步骤配置 MCP Server 并安装 Skill。
+面向开发者和用户的手动安装指南。按照以下步骤配置 MCP Server 并安装 Skill。
 
 ## 前置条件
 
@@ -27,14 +27,34 @@ claude mcp list
 
 ### 2. 安装 Skill
 
-```bash
-git clone https://github.com/inSai-Hilight/hilight-skills.git ~/hilight-skills
-ln -s ~/hilight-skills/skills/hilight-tiktok ~/.claude/skills/hilight-tiktok
+**方式一：Plugin Marketplace（推荐）**
+
+在 Claude Code 会话中执行：
+
+```
+/plugin marketplace add inSai-Hilight/skills
+/plugin install hilight-tiktok@hilight-skills
 ```
 
-> 使用软链接可以通过 `git pull` 直接获取 skill 更新。
+**方式二：手动安装**
+
+如果 `/plugin` 命令不可用，使用以下命令：
+
+```bash
+git clone https://github.com/inSai-Hilight/skills.git /tmp/hilight-skills
+mkdir -p ~/.claude/skills
+cp -r /tmp/hilight-skills/skills/hilight-tiktok ~/.claude/skills/hilight-tiktok
+rm -rf /tmp/hilight-skills
+```
 
 ### 3. 验证
+
+确认 skill 文件已就位：
+
+```bash
+head -5 ~/.claude/skills/hilight-tiktok/SKILL.md
+# 应输出包含 name: hilight-tiktok 的内容
+```
 
 重启 Claude Code，然后告诉它「帮我生成一个 TK 视频」，如果它开始询问商品信息，说明 Skill 已生效。
 
@@ -85,12 +105,35 @@ mcporter config list
 
 ### 3. 安装 Skill
 
+**方式一：ClawHub（推荐）**
+
 ```bash
-git clone https://github.com/inSai-Hilight/hilight-skills.git ~/hilight-skills
-ln -s ~/hilight-skills/skills/hilight-tiktok ~/.openclaw/skills/hilight-tiktok
+npm i -g clawhub
+clawhub install hilight-tiktok
 ```
 
-> 使用软链接可以通过 `git pull` 直接获取 skill 更新。
+> skill 默认安装到当前目录的 `./skills/` 下。安装完成后需重启 OpenClaw 会话才能生效。
+
+**方式二：手动安装**
+
+如果 skill 尚未发布到 ClawHub，使用以下命令：
+
+```bash
+git clone https://github.com/inSai-Hilight/skills.git /tmp/hilight-skills
+cp -r /tmp/hilight-skills/skills/hilight-tiktok ~/.openclaw/skills/hilight-tiktok
+rm -rf /tmp/hilight-skills
+```
+
+### 4. 验证
+
+确认 skill 已安装：
+
+```bash
+openclaw skills list
+# 应包含 hilight-tiktok
+```
+
+重启 OpenClaw 会话，告诉它「帮我生成一个 TK 视频」，如果它开始询问商品信息，说明 Skill 已生效。
 
 ## 可用工具
 

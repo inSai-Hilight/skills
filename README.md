@@ -15,33 +15,80 @@ inSai Hilight 官方 AI Agent Skills 集合。让 AI Agent 获得 Hilight 平台
 - Hilight 平台账号和 API Key（在 [用户中心](https://app.hi-light.ai/userCenter) 获取）
 - 已安装 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 或 [OpenClaw](https://openclaw.com)
 
-### 安装方式
+### Claude Code 安装
 
-- **自己动手安装** — 阅读 [手动安装指南](docs/setup.md)，按步骤运行命令即可
-- **让 Agent 帮你装** — 将 [Agent 自动安装指南](docs/install-guide.md) 发给你的 AI Agent，它会自动完成配置（中途会向你索取 API Key）
+**1. 配置 MCP Server**
 
-## 项目结构
+```bash
+claude mcp add --transport http --scope user hilight https://wiseapi.hi-light.ai/mcp \
+  --header "Authorization: Bearer sk_your_api_key_here"
+```
+
+**2. 安装 Skill（二选一）**
+
+通过 Plugin Marketplace：
 
 ```
-hilight-skills/
-├── .claude-plugin/
-│   └── plugin.json              # 插件元数据
-├── docs/
-│   ├── setup.md                 # 手动安装指南（给人看）
-│   ├── install-guide.md         # Agent 自动安装指南（给 Agent 看）
-│   └── usage-examples.md        # 使用示例
-├── skills/
-│   └── <skill-name>/
-│       ├── SKILL.md             # Skill 定义（必需）
-│       ├── scripts/             # 可执行脚本（可选）
-│       ├── references/          # 参考文档（可选）
-│       └── assets/              # 模板、资源文件（可选）
-├── template/
-│   └── SKILL.md                 # 新 skill 模板
-├── LICENSE
-├── NOTICE
-└── README.md
+/plugin marketplace add inSai-Hilight/skills
+/plugin install hilight-tiktok@hilight-skills
 ```
+
+或手动安装：
+
+```bash
+git clone https://github.com/inSai-Hilight/skills.git /tmp/hilight-skills
+mkdir -p ~/.claude/skills
+cp -r /tmp/hilight-skills/skills/hilight-tiktok ~/.claude/skills/hilight-tiktok
+rm -rf /tmp/hilight-skills
+```
+
+**3. 重启 Claude Code，告诉它「帮我生成一个 TK 视频」**
+
+### OpenClaw 安装
+
+**1. 配置 MCP Server**
+
+编辑 `~/.mcporter/mcporter.json`：
+
+```json
+{
+  "mcpServers": {
+    "hilight": {
+      "url": "https://wiseapi.hi-light.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer sk_your_api_key_here"
+      }
+    }
+  }
+}
+```
+
+然后重启 Gateway：`openclaw gateway restart`
+
+**2. 安装 Skill（二选一）**
+
+通过 ClawHub：
+
+```bash
+npm i -g clawhub
+clawhub install hilight-tiktok
+```
+
+或手动安装：
+
+```bash
+git clone https://github.com/inSai-Hilight/skills.git /tmp/hilight-skills
+cp -r /tmp/hilight-skills/skills/hilight-tiktok ~/.openclaw/skills/hilight-tiktok
+rm -rf /tmp/hilight-skills
+```
+
+**3. 重启 OpenClaw 会话，告诉它「帮我生成一个 TK 视频」**
+
+### 让 Agent 帮你装
+
+将 [Agent 自动安装指南](docs/install-guide.md) 的链接发给你的 AI Agent，它会自动完成全部配置（中途会向你索取 API Key）。
+
+> 详细安装说明请参考 [手动安装指南](docs/setup.md)
 
 ## 贡献新 Skill
 

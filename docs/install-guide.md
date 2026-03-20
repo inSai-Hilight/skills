@@ -143,21 +143,49 @@ mcporter config list
 
 ### 3. 安装 Skill
 
-在 OpenClaw 会话中执行：
+**优先使用 ClawHub 安装：**
 
-```
-/plugin marketplace add inSai-Hilight/skills
-/plugin install hilight-tiktok@hilight-skills
-```
-
-如果 OpenClaw 不支持 plugin marketplace，则手动下载安装：
+确保已安装 ClawHub CLI：
 
 ```bash
-git clone {{SKILL_REPO}} ~/hilight-skills
-cp -r ~/hilight-skills/skills/hilight-tiktok ~/.openclaw/skills/hilight-tiktok
+npm i -g clawhub
 ```
 
-### 4. 验证
+然后安装 skill：
+
+```bash
+clawhub install hilight-tiktok
+```
+
+> skill 默认安装到当前目录的 `./skills/` 下。安装完成后需重启 OpenClaw 会话才能生效。
+
+**如果 skill 尚未发布到 ClawHub，使用 GitHub 仓库直接安装：**
+
+在 OpenClaw 会话中发送仓库链接，让 Agent 自动完成安装：
+
+```
+请帮我从 {{SKILL_REPO}} 安装 hilight-tiktok skill
+```
+
+**如果以上方式均失败，手动安装（不可跳过）：**
+
+```bash
+git clone {{SKILL_REPO}} /tmp/hilight-skills
+cp -r /tmp/hilight-skills/skills/hilight-tiktok ~/.openclaw/skills/hilight-tiktok
+rm -rf /tmp/hilight-skills
+```
+
+### 4. 验证 Skill 安装
+
+> **必须执行此步骤，不能跳过。Skill 未安装成功则整体安装未完成。**
+
+```bash
+openclaw skills list
+```
+
+确认输出中包含 `hilight-tiktok`。如果未显示，回到第 3 步重新安装。
+
+### 5. 验证 MCP 连通性
 
 调用 `get_pricing` 测试连通性。返回错误响应（如"项目不存在"）即说明服务可达且鉴权正常。
 
