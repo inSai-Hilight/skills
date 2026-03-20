@@ -46,23 +46,37 @@ claude mcp list
 
 确认输出中包含 `hilight`。
 
-### 2. 添加 Skill Marketplace
+### 2. 安装 Skill
 
-在 Claude Code 会话中执行：
+**优先使用 Plugin Marketplace 安装：**
 
 ```
 /plugin marketplace add inSai-Hilight/skills
-```
-
-### 3. 安装 Skill
-
-在 Claude Code 会话中执行：
-
-```
 /plugin install hilight-tiktok@hilight-skills
 ```
 
-### 4. 验证
+**如果 `/plugin` 命令不可用或执行失败，必须使用手动方式安装（不可跳过）：**
+
+```bash
+git clone {{SKILL_REPO}} /tmp/hilight-skills
+mkdir -p ~/.claude/skills
+cp -r /tmp/hilight-skills/skills/hilight-tiktok ~/.claude/skills/hilight-tiktok
+rm -rf /tmp/hilight-skills
+```
+
+### 3. 验证 Skill 安装
+
+> **必须执行此步骤，不能跳过。Skill 未安装成功则整体安装未完成。**
+
+检查 skill 文件是否存在：
+
+```bash
+cat ~/.claude/skills/hilight-tiktok/SKILL.md | head -5
+```
+
+如果输出包含 `name: hilight-tiktok`，则 Skill 安装成功。如果文件不存在，回到第 2 步重新安装。
+
+### 4. 验证 MCP 连通性
 
 提示用户重启 Claude Code（或执行 `/mcp` 重新加载），然后调用 `get_pricing` 测试连通性。返回错误响应（如"项目不存在"）即说明服务可达且鉴权正常。
 
