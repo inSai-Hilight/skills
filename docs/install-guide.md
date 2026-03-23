@@ -127,12 +127,6 @@ mcporter config list
 }
 ```
 
-重启 Gateway：
-
-```bash
-openclaw gateway restart
-```
-
 验证连接：
 
 ```bash
@@ -143,23 +137,9 @@ mcporter config list
 
 ### 3. 安装 Skill
 
-**优先使用 ClawHub 安装：**
+> **必须执行此步骤，不能跳过。Skill 未安装成功则整体安装未完成。**
 
-确保已安装 ClawHub CLI：
-
-```bash
-npm i -g clawhub
-```
-
-然后安装 skill：
-
-```bash
-clawhub install hilight-tiktok
-```
-
-> skill 默认安装到当前目录的 `./skills/` 下。安装完成后需重启 OpenClaw 会话才能生效。
-
-**如果 skill 尚未发布到 ClawHub，使用 GitHub 仓库直接安装：**
+**优先使用 GitHub 仓库安装：**
 
 在 OpenClaw 会话中发送仓库链接，让 Agent 自动完成安装：
 
@@ -167,7 +147,7 @@ clawhub install hilight-tiktok
 请帮我从 {{SKILL_REPO}} 安装 hilight-tiktok skill
 ```
 
-**如果以上方式均失败，手动安装（不可跳过）：**
+**如果上述方式失败，手动安装（不可跳过）：**
 
 ```bash
 git clone {{SKILL_REPO}} /tmp/hilight-skills
@@ -187,7 +167,11 @@ openclaw skills list
 
 ### 5. 验证 MCP 连通性
 
-调用 `get_pricing` 测试连通性。返回错误响应（如"项目不存在"）即说明服务可达且鉴权正常。
+```bash
+mcporter call hilight get_pricing
+```
+
+返回错误响应（如"项目不存在"）即说明服务可达且鉴权正常。
 
 ---
 
@@ -211,3 +195,21 @@ openclaw skills list
 | 401 未授权 | API Key 无效或已过期，引导用户前往 {{APP_URL}}/userCenter 重新生成 |
 | 工具未显示 | 重启 Claude Code / OpenClaw gateway 并检查 MCP 服务状态 |
 | 请求超时 | 服务可能负载较高，稍后重试 |
+
+---
+
+## ✅ 安装完成检查清单
+
+Agent 收尾前根据当前环境逐项核对，全部通过才算安装完成。
+
+### Claude Code
+
+- [ ] `claude mcp list` 输出中包含 `hilight` 条目
+- [ ] 调用 `get_pricing` 工具返回非网络错误（服务可达且鉴权正常）
+- [ ] Skill 文件存在：`~/.claude/skills/hilight-tiktok/SKILL.md`
+
+### OpenClaw
+
+- [ ] `mcporter config list` 输出中包含 `hilight` 且显示已连接
+- [ ] `mcporter call hilight get_pricing` 返回非网络错误（服务可达且鉴权正常）
+- [ ] `openclaw skills list` 输出中包含 `hilight-tiktok`
