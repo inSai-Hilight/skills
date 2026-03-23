@@ -1,5 +1,8 @@
 {
   "name": "hilight-tiktok",
   "description": "通过 Hilight MCP Server 生成 TikTok 带货视频，覆盖图片上传、项目创建、参数设置、费用确认、视频生成、进度追踪和失败重试全流程",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "skills": [
+    "./skills/hilight-tiktok"
+  ]
 }
