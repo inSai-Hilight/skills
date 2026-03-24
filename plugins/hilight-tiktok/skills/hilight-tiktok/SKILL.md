@@ -7,22 +7,17 @@ description: 通过 inSai Hilight MCP Server 生成 TikTok 带货视频。当用
 
 你是一个帮助用户通过 Hilight MCP Server 生成 TikTok 带货视频的 AI Agent。整个流程涉及 7 个 MCP 工具，按顺序协作完成从素材准备到视频交付的全链路。
 
-## 环境变量
+## 环境配置
 
-以下变量在文档中以 `{{变量名}}` 形式引用，切换环境时只需修改此处：
-
-| 变量 | 值 | 说明 |
-|------|----|------|
-| `API_BASE` | `https://wiseapi.hi-light.ai` | HTTP 接口的基础地址 |
-| `APP_BASE` | `https://app.hi-light.ai` | 用户中心和充值页面地址 |
+在执行任何操作前，先读取 `references/config.md` 获取当前环境的 URL 配置（API_BASE 和 APP_BASE）。后续流程中所有涉及 API 地址和用户中心链接的地方，均使用从该文件读取的值。
 
 ## 前置检查
 
 在开始工作流程前，先确认 Hilight MCP Server 已正确配置。尝试调用任意一个 hilight MCP tool（如 `create_project`），如果调用失败（tool 不存在或连接错误），说明 MCP 尚未配置，按以下流程引导用户：
 
-1. 向用户索取 **Hilight API Key**（以 `sk_` 开头，在 {{APP_BASE}}/userCenter 获取）
+1. 向用户索取 **Hilight API Key**（以 `sk_` 开头，在 APP_BASE/userCenter 获取）
 2. 用户提供后，根据当前 Agent 环境执行配置：
-   - **Claude Code**：执行 `claude mcp add --transport http --scope user hilight {{API_BASE}}/mcp --header "Authorization: Bearer <API_KEY>"`
+   - **Claude Code**：执行 `claude mcp add --transport http --scope user hilight API_BASE/mcp --header "Authorization: Bearer <API_KEY>"`
    - **OpenClaw**：编辑 `~/.mcporter/mcporter.json`，在 `mcpServers` 中添加 `hilight` 配置（包含 `url` 和 `headers.Authorization`），然后执行 `openclaw gateway restart`
 3. 配置完成后，重新调用 tool 验证连通性，确认成功后再进入工作流程
 
@@ -53,7 +48,7 @@ description: 通过 inSai Hilight MCP Server 生成 TikTok 带货视频。当用
 **使用 HTTP 接口上传（推荐，速度快）：**
 1. 直接通过 `curl` 调用 Hilight 文件上传接口（无需鉴权）：
    ```bash
-   curl -s -X POST {{API_BASE}}/api/mcp/upload \
+   curl -s -X POST API_BASE/api/mcp/upload \
      -F "file=@/path/to/image.jpg"
    ```
 2. 响应格式为 `{"code": 10000, "data": {"url": "<CDN地址>"}}`，提取 `data.url` 作为图片 URL
@@ -84,7 +79,7 @@ description: 通过 inSai Hilight MCP Server 生成 TikTok 带货视频。当用
 2. 将返回的费用数据（单价、数量、总费用、余额、是否充足等）以清晰的格式展示给用户
 3. **余额不足时**：
    - 展示差额信息
-   - 提供充值链接：{{APP_BASE}}/userCenter/star-center
+   - 提供充值链接：APP_BASE/userCenter/star-center
    - **终止流程，不得调用 `submit_project`**
 
 4. **余额充足时**：

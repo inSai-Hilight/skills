@@ -2,17 +2,17 @@
   "name": "hilight-skills",
   "owner": {
     "name": "inSai Hilight",
-    "email": "support@hi-light.ai"
+    "email": "hilight.insai@gmail.com"
   },
   "metadata": {
-    "description": "inSai Hilight 官方 AI Agent Skills 集合",
-    "version": "1.0.0"
+    "description": "inSai Hilight 官方 AI Agent Skills 集合"
   },
   "plugins": [
     {
       "name": "hilight-tiktok",
+      "source": "./plugins/hilight-tiktok",
       "description": "通过 Hilight MCP Server 生成 TikTok 带货视频，覆盖图片上传、项目创建、参数设置、费用确认、视频生成、进度追踪和失败重试全流程",
-      "source": "./plugins/hilight-tiktok"
+      "version": "1.0.1"
     }
   ]
 }

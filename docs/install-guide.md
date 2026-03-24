@@ -48,14 +48,14 @@ claude mcp list
 
 ### 2. 安装 Skill
 
-**优先使用 Plugin Marketplace 安装：**
+**优先使用 `claude plugin` 命令安装：**
 
-```
-/plugin marketplace add inSai-Hilight/skills
-/plugin install hilight-tiktok@hilight-skills
+```bash
+claude plugin marketplace add inSai-Hilight/skills
+claude plugin install hilight-tiktok@hilight-skills
 ```
 
-**如果 `/plugin` 命令不可用或执行失败，必须使用手动方式安装（不可跳过）：**
+**如果 `claude plugin` 命令不可用或执行失败，必须使用手动方式安装（不可跳过）：**
 
 ```bash
 git clone {{SKILL_REPO}} /tmp/hilight-skills
