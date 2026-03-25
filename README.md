@@ -6,7 +6,7 @@ inSai Hilight 官方 AI Agent Skills 集合。让 AI Agent 获得 Hilight 平台
 
 | Skill | 说明 |
 |-------|------|
-| [hilight-tiktok](skills/hilight-tiktok/) | 通过 Hilight MCP Server 生成 TikTok 带货视频，覆盖从素材上传到视频交付的全流程 |
+| [hilight-tiktok](plugins/hilight-tiktok/skills/hilight-tiktok/) | 通过 Hilight MCP Server 生成 TikTok 带货视频，覆盖从素材上传到视频交付的全流程 |
 
 ## 快速开始
 
@@ -38,7 +38,7 @@ claude mcp add --transport http --scope user hilight https://wiseapi.hi-light.ai
 ```bash
 git clone https://github.com/inSai-Hilight/skills.git /tmp/hilight-skills
 mkdir -p ~/.claude/skills
-cp -r /tmp/hilight-skills/skills/hilight-tiktok ~/.claude/skills/hilight-tiktok
+cp -r /tmp/hilight-skills/plugins/hilight-tiktok/skills/hilight-tiktok ~/.claude/skills/hilight-tiktok
 rm -rf /tmp/hilight-skills
 ```
 
@@ -65,20 +65,13 @@ rm -rf /tmp/hilight-skills
 
 然后重启 Gateway：`openclaw gateway restart`
 
-**2. 安装 Skill（二选一）**
+**2. 安装 Skill**
 
-通过 ClawHub：
-
-```bash
-npm i -g clawhub
-clawhub install hilight-tiktok
-```
-
-或手动安装：
+目前只支持手动安装
 
 ```bash
 git clone https://github.com/inSai-Hilight/skills.git /tmp/hilight-skills
-cp -r /tmp/hilight-skills/skills/hilight-tiktok ~/.openclaw/skills/hilight-tiktok
+cp -r /tmp/hilight-skills/plugins/hilight-tiktok/skills/hilight-tiktok ~/.openclaw/skills/hilight-tiktok
 rm -rf /tmp/hilight-skills
 ```
 
