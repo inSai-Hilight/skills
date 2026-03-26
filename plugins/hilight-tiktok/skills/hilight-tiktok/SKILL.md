@@ -102,15 +102,12 @@ description: 通过 inSai Hilight MCP Server 生成 TikTok 带货视频。当用
 - 用户在等待期间可以继续对话
 
 **OpenClaw 环境**（检测方式：系统提示中包含 "OpenClaw" 或可调用 `openclaw` CLI）：
-- 使用 `openclaw cron add --every` 创建间隔轮询任务：
-  ```
-  openclaw cron add \
-    --name "视频进度轮询-{project_id}" \
-    --every 5m \
-    --session main \
-    --message "调用 query_tiktok_status 查询项目 {project_id} 的视频生成进度，如果状态为 completed/partial_failed/all_failed 则展示结果并删除本 cron 任务"
-  ```
-- 视频完成后，用 `openclaw cron rm <jobId>` 清理该定时任务
+1. 先执行 `openclaw cron add --help` 查看当前版本的参数语法
+2. 根据帮助文档创建轮询任务，要求：
+   - 每 5 分钟执行一次
+   - session 用 isolated
+   - 投递到用户当前对话渠道（从当前会话上下文获取 channel 和 to，不要硬编码）
+   - message 内容：查询项目 `{project_id}` 的视频生成进度；若状态为 `completed/partial_failed/all_failed`，展示结果（视频 URL），然后用 `openclaw cron rm <jobId>` 删除本任务
 
 **其他 Agent 环境**（Codex、Gemini CLI 等）：
 - 先查询一次进度并展示给用户
