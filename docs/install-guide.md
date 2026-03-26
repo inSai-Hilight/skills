@@ -78,7 +78,7 @@ cat ~/.claude/skills/hilight-tiktok/SKILL.md | head -5
 
 ### 4. 验证 MCP 连通性
 
-提示用户重启 Claude Code（或执行 `/mcp` 重新加载），然后调用 `get_pricing` 测试连通性。返回错误响应（如"项目不存在"）即说明服务可达且鉴权正常。
+提示用户重启 Claude Code，然后调用 `get_pricing` 测试连通性。返回错误响应（如"项目不存在"）即说明服务可达且鉴权正常。
 
 ---
 

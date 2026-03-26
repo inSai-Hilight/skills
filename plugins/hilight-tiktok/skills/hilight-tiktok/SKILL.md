@@ -98,15 +98,15 @@ description: 通过 inSai Hilight MCP Server 生成 TikTok 带货视频。当用
 视频生成是一个长时间异步任务（通常 15-30 分钟），轮询期间不应阻塞会话。**禁止使用 `sleep` 命令阻塞进程**——sleep 期间用户无法与你交互，体验很差。应根据运行环境选择非阻塞的轮询方式：
 
 **Claude Code 环境**（检测方式：系统提示中包含 "You are Claude Code"）：
-- 使用 `/loop` 技能设置定时轮询：`/loop 2m 调用 query_tiktok_status 查询项目 {project_id} 的进度`
+- 使用 `/loop` 技能设置定时轮询：`/loop 5m 调用 query_tiktok_status 查询项目 {project_id} 的进度`
 - 用户在等待期间可以继续对话
 
 **OpenClaw 环境**（检测方式：系统提示中包含 "OpenClaw" 或可调用 `openclaw` CLI）：
-- 使用 `openclaw cron add` 创建重复定时任务进行轮询：
+- 使用 `openclaw cron add --every` 创建间隔轮询任务：
   ```
   openclaw cron add \
     --name "视频进度轮询-{project_id}" \
-    --cron "*/2 * * * *" \
+    --every 5m \
     --session main \
     --message "调用 query_tiktok_status 查询项目 {project_id} 的视频生成进度，如果状态为 completed/partial_failed/all_failed 则展示结果并删除本 cron 任务"
   ```

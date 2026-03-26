@@ -2,7 +2,7 @@
 .claude/settings.local.json
 
 # Test environment docs (not for public)
-docs/install-guide-test.md
+docs/install-guide-*
 
 # OS files
 .DS_Store
