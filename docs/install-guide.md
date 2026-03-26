@@ -14,7 +14,7 @@
 
 ### 第一步：获取 API Key
 
-在继续之前，向用户索取 **Hilight API Key**（以 `sk_` 开头的 64 位十六进制字符串，在 {{APP_URL}}/userCenter 获取）。
+在继续之前，向用户索取 **Hilight API Key**（以 `sk_` 开头的 64 位十六进制字符串，在 {{APP_URL}}/userCenter/api-management 获取）。
 
 > **必须等用户提供 API Key 后才能继续配置，不要使用占位符完成配置。**
 
@@ -192,7 +192,7 @@ mcporter call hilight get_pricing
 | 问题 | 解决方案 |
 |------|----------|
 | 连接被拒绝 | 检查网络连通性，确认可以访问 {{MCP_ENDPOINT}} |
-| 401 未授权 | API Key 无效或已过期，引导用户前往 {{APP_URL}}/userCenter 重新生成 |
+| 401 未授权 | API Key 无效或已过期，引导用户前往 {{APP_URL}}/userCenter/api-management 重新生成 |
 | 工具未显示 | 重启 Claude Code / OpenClaw gateway 并检查 MCP 服务状态 |
 | 请求超时 | 服务可能负载较高，稍后重试 |
 
